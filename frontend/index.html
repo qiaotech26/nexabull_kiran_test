@@ -1120,6 +1120,310 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* ═══════════════════════════════════════════════════════
+       PREMIUM HERO STAGE
+    ═══════════════════════════════════════════════════════ */
+    :root {
+      --card-glass: rgba(16, 26, 40, .82);
+      --line-glass: rgba(120, 150, 180, .18);
+      --mint: #19f0b4;
+      --amber: #c98a2b;
+    }
+
+    /* Stage container */
+    .stage {
+      position: relative;
+      width: min(100%, 688px);
+      aspect-ratio: 688/486;
+      container-type: inline-size;
+      isolation: isolate;
+      flex-shrink: 0;
+      perspective: 1000px;
+    }
+
+    /* Particle canvas — bleeds outside stage so net fills hero */
+    #net {
+      position: absolute;
+      inset: -40px;
+      width: calc(100% + 80px);
+      height: calc(100% + 80px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Decorative rings */
+    .ring {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      border-radius: 50%;
+      border: 1px solid rgba(80, 140, 150, .14);
+      transform: translate(-50%, -50%);
+    }
+
+    .r1 {
+      width: 62%;
+      aspect-ratio: 1;
+    }
+
+    .r2 {
+      width: 80%;
+      aspect-ratio: 1;
+      border-style: dashed;
+      border-color: rgba(80, 140, 150, .10);
+      animation: stageRingSpin 80s linear infinite;
+    }
+
+    /* Golden orb */
+    .orb {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 53%;
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 78% 55%, rgba(255, 215, 40, .95) 0 18%, transparent 58%),
+        radial-gradient(circle at 22% 50%, #020a14 0 28%, transparent 62%),
+        radial-gradient(circle at 50% 50%, #06222c 0 45%, transparent 72%),
+        radial-gradient(circle at 50% 100%, #f2c400, #d9a400 60%);
+      background-color: #e9b800;
+      box-shadow: 0 0 90px 10px rgba(255, 200, 0, .18), inset 0 0 60px rgba(0, 0, 0, .6);
+      overflow: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .orb::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent 0 60%, rgba(255, 235, 120, .35) 80%, transparent 100%);
+      animation: stageOrbSpin 14s linear infinite;
+      mix-blend-mode: screen;
+    }
+
+    .orb::after {
+      content: "";
+      position: absolute;
+      inset: 8%;
+      border-radius: 50%;
+      border: 1px dashed rgba(60, 200, 190, .25);
+    }
+
+    /* Bull hero art inside orb */
+    .stage .hero {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      width: 92%;
+      filter: none;
+      transition: transform .15s ease-out;
+      transform: translate(-50%, -50%) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      aspect-ratio: 592/499;
+    }
+
+    .stage .hero .art {
+      position: absolute;
+      inset: 0;
+      background: url('assets/hero-bull.png') center/contain no-repeat;
+      filter: drop-shadow(0 14px 14px rgba(0, 0, 0, .55)) drop-shadow(0 0 16px rgba(255, 200, 0, .35));
+      animation: stageBullFloat 5s ease-in-out infinite;
+    }
+
+    .stage .hero .art::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      -webkit-mask: url('assets/hero-bull.png') center/contain no-repeat;
+      mask: url('assets/hero-bull.png') center/contain no-repeat;
+      background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, .75) 50%, transparent 60%) 160% 0/250% 100% no-repeat;
+      mix-blend-mode: soft-light;
+      animation: stageShine 5s ease-in-out infinite 1s;
+    }
+
+    /* Floating cards */
+    .stage .card {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 5%;
+      padding: 2.2% 3%;
+      border-radius: 14px;
+      background: var(--card-glass);
+      border: 1px solid var(--line-glass);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+      animation: stageBullFloat 6s ease-in-out infinite;
+      color: #fff;
+    }
+
+    .stage .card .ico {
+      flex: none;
+      width: clamp(30px, 7.3cqw, 50px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+    }
+
+    .stage .card small {
+      display: block;
+      font-size: clamp(9px, 1.9cqw, 13px);
+      color: var(--amber);
+      margin-bottom: 2px;
+    }
+
+    .stage .card b {
+      display: block;
+      font-size: clamp(14px, 3.2cqw, 22px);
+      letter-spacing: .2px;
+    }
+
+    .c-btc {
+      left: 4.5%;
+      top: 13%;
+      width: 21.5cqw;
+      min-width: 140px;
+      animation-delay: -1s;
+    }
+
+    .c-btc .ico {
+      background: #0d3a3a;
+      color: #cfe;
+      border: 1px solid #14504f;
+    }
+
+    .c-sec {
+      right: 6.5%;
+      top: 17%;
+      width: 20.5cqw;
+      min-width: 140px;
+      animation-delay: -3s;
+    }
+
+    .c-sec .ico {
+      background: #122b44;
+      color: #f2a93b;
+    }
+
+    .c-sec b {
+      color: var(--mint);
+    }
+
+    .c-eth {
+      left: 3%;
+      bottom: 6%;
+      width: 17.5cqw;
+      min-width: 120px;
+      animation-delay: -2s;
+    }
+
+    .c-eth .ico {
+      background: #201a46;
+      color: #c8c0ff;
+      border: 1px solid #2f2868;
+    }
+
+    .up {
+      color: var(--mint);
+    }
+
+    .down {
+      color: #ff5d7a;
+    }
+
+    /* Orbiting dot trails */
+    .orbit {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: var(--d);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      color: var(--c);
+      transform: translate(-50%, -50%);
+      animation: stageRingSpin var(--t) linear infinite;
+      pointer-events: none;
+    }
+
+    .orbit::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent 0 78%, var(--c) 100%);
+      opacity: .55;
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
+      mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
+    }
+
+    .orbit::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 2.3cqw;
+      min-width: 10px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle at 40% 35%, #fff6 0, var(--c) 45%);
+      box-shadow: 0 0 14px 3px var(--c), 0 0 32px 6px color-mix(in srgb, var(--c) 40%, transparent);
+    }
+
+    .o1 {
+      --d: 43.6cqw;
+      --c: #f2a23a;
+      --t: 16s;
+    }
+
+    .o2 {
+      --d: 46.6cqw;
+      --c: #c76a95;
+      --t: 24s;
+      animation-direction: reverse;
+    }
+
+    /* Stage animations (prefixed to avoid collisions) */
+    @keyframes stageRingSpin {
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    @keyframes stageOrbSpin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes stageBullFloat {
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    @keyframes stageShine {
+      0% {
+        background-position: 160% 0;
+      }
+
+      60%,
+      100% {
+        background-position: -60% 0;
+      }
+    }
+
+    /* Responsive: hide stage on very small screens, show only on desktop */
+    @media (max-width: 900px) {
+      .stage {
+        display: none;
+      }
+    }
   </style>
 </head>
 

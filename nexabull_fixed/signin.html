@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NexaBull | Secure Authentication</title>
+    <meta name="description" content="Sign in to your NexaBull account securely." />
+    <link rel="icon" href="assets/logo.png" type="image/png" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            background: #021a1f;
+        }
+
+        /* ── FULL-PAGE BACKGROUND CANVAS ── */
+        #auth-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ── TEAL GRADIENT OVERLAY ── */
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(160deg,
+                    rgba(0, 60, 80, 0.55) 0%,
+                    rgba(0, 120, 140, 0.45) 30%,
+                    rgba(0, 100, 120, 0.4) 60%,
+                    rgba(2, 20, 35, 0.7) 100%);
+            pointer-events: none;
+        }
+
+        /* ── FLOATING FINANCIAL NUMBERS ── */
+        .float-nums {
+            position: fixed;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .fn {
+            position: absolute;
+            font-family: monospace;
+            font-size: 13px;
+            font-weight: 700;
+            animation: floatNum 7s ease-in-out infinite alternate;
+            user-select: none;
+        }
+
+        @keyframes floatNum {
+            from {
+                transform: translateY(0) rotate(-2deg);
+                opacity: 0.5;
+            }
+
+            to {
+                transform: translateY(-18px) rotate(2deg);
+                opacity: 0.8;
+            }
+        }
+
+        /* ── WIREFRAME BULL SVG SIDES ── */
+        .bull-left,
+        .bull-right {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+            width: 420px;
+            height: 420px;
+            pointer-events: none;
+            opacity: 0.85;
+        }
+
+        .bull-left {
+            left: -60px;
+        }
+
+        .bull-right {
+            right: -60px;
+            transform: translateY(-50%) scaleX(-1);
+        }
+
+        /* ── CENTERED CARD ── */
+        .auth-card {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: rgba(8, 22, 45, 0.97);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 40px 44px 44px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .auth-logo img {
+            height: 64px;
+        }
+
+        .auth-shield {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            background: rgba(0, 180, 100, 0.1);
+            border: 2px solid rgba(0, 200, 100, 0.3);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        .auth-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        .auth-title span {
+            color: #f5c518;
+        }
+
+        /* ── FORM FIELDS ── */
+        .field-group {
+            margin-bottom: 18px;
+        }
+
+        .field-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #c8d8e8;
+            margin-bottom: 8px;
+        }
+
+        .field-label span {
+            font-size: 15px;
+        }
+
+        .field-wrap {
+            position: relative;
+        }
+
+        .field-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 13px 42px 13px 44px;
+            font-size: 14px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .field-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .field-input:focus {
+            border-color: rgba(0, 212, 232, 0.5);
+        }
+
+        .field-prefix {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .field-suffix {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .field-suffix:hover {
+            opacity: 1;
+        }
+
+        /* ── CAPTCHA ROW ── */
+        .captcha-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .captcha-img-wrap {
+            flex: 1;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .captcha-img-wrap img {
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
+        }
+
+        .captcha-reload {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(0, 212, 232, 0.15);
+            border: 1px solid rgba(0, 212, 232, 0.3);
+            color: #00d4e8;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .captcha-reload:hover {
+            background: rgba(0, 212, 232, 0.25);
+            transform: rotate(180deg);
+        }
+
+        /* ── SUBMIT BUTTON ── */
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #f5c518, #e0a800);
+            color: #000;
+            font-size: 15px;
+            font-weight: 800;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 0.3px;
+            transition: all 0.25s;
+            box-shadow: 0 6px 24px rgba(245, 197, 24, 0.35);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(245, 197, 24, 0.5);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ── ALERT ── */
+        .auth-alert {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .auth-alert.show {
+            display: block;
+        }
+
+        .auth-alert.error {
+            background: rgba(255, 80, 80, 0.12);
+            border: 1px solid rgba(255, 80, 80, 0.3);
+            color: #ff6b6b;
+        }
+
+        .auth-alert.success {
+            background: rgba(0, 230, 118, 0.12);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            color: #00e676;
+        }
+
+        .auth-footer-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .auth-footer-link a {
+            color: #f5c518;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 500px) {
+            .auth-box {
+                padding: 28px 20px 32px;
+            }
+
+            .bull-left,
+            .bull-right {
+                width: 220px;
+                height: 220px;
+                opacity: 0.4;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Full-page canvas for teal particle mesh -->
+    <canvas id="auth-canvas"></canvas>
+    <div class="bg-overlay"></div>
+
+    <!-- Floating financial numbers -->
+    <div class="float-nums" id="float-nums"></div>
+
+    <!-- Wireframe bull left -->
+    <svg class="bull-left" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#00e8c8" stroke-width="0.8" opacity="0.7">
+            <!-- Bull body polygon mesh -->
+            <polygon points="120,280 200,220 280,260 260,340 180,360" fill="none" />
+            <polygon points="200,220 280,200 320,260 280,260" fill="none" />
+            <polygon points="280,200 360,180 380,240 320,260" fill="none" />
+            <polygon points="360,180 420,160 440,220 380,240" fill="none" />
+            <!-- Head -->
+            <polygon points="380,120 420,100 450,140 420,160 380,140" fill="none" />
+            <polygon points="420,100 460,90 470,130 450,140" fill="none" />
+            <!-- Horn -->
+            <line x1="440" y1="95" x2="460" y2="60" />
+            <line x1="460" y1="90" x2="480" y2="65" />
+            <!-- Neck -->
+            <polygon points="360,140 400,130 420,160 380,180" fill="none" />
+            <!-- Legs -->
+            <polygon points="180,360 200,380 180,420 160,400 140,380" fill="none" />
+            <polygon points="240,360 260,375 250,420 230,415 220,380" fill="none" />
+            <polygon points="300,340 320,355 310,400 290,395 280,365" fill="none" />
+            <polygon points="350,300 370,315 360,360 340,355 335,325" fill="none" />
+            <!-- Tail -->
+            <polyline points="120,290 90,310 70,340 80,370 100,360" />
+            <!-- Internal mesh lines -->
+            <line x1="200" y1="220" x2="260" y2="340" />
+            <line x1="280" y1="260" x2="180" y2="360" />
+            <line x1="280" y1="200" x2="260" y2="340" />
+            <line x1="320" y1="260" x2="240" y2="360" />
+            <line x1="380" y1="240" x2="320" y2="260" />
+            <line x1="360" y1="180" x2="300" y2="340" />
+            <line x1="420" y1="160" x2="350" y2="300" />
+            <!-- Dots at vertices -->
+            <circle cx="200" cy="220" r="3" fill="#00e8c8" />
+            <circle cx="280" cy="200" r="3" fill="#00e8c8" />
+            <circle cx="360" cy="180" r="3" fill="#00e8c8" />
+            <circle cx="420" cy="160" r="3" fill="#00e8c8" />
+            <circle cx="280" cy="260" r="3" fill="#00e8c8" />
+            <circle cx="320" cy="260" r="3" fill="#00e8c8" />
+            <circle cx="380" cy="240" r="3" fill="#00e8c8" />
+            <circle cx="260" cy="340" r="3" fill="#00e8c8" />
+            <circle cx="300" cy="340" r="3" fill="#00e8c8" />
+            <circle cx="350" cy="300" r="3" fill="#00e8c8" />
+            <circle cx="180" cy="360" r="3" fill="#f5c518" />
+            <circle cx="240" cy="360" r="3" fill="#f5c518" />
+            <circle cx="420" cy="100" r="3" fill="#00e8c8" />
+            <circle cx="450" cy="140" r="3" fill="#00e8c8" />
+            <circle cx="380" cy="120" r="3" fill="#00e8c8" />
+        </g>
+    </svg>
+
+    <!-- Wireframe bull right (mirrored via CSS scaleX) -->
+    <svg class="bull-right" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#00e8c8" stroke-width="0.8" opacity="0.7">
+            <polygon points="120,280 200,220 280,260 260,340 180,360" fill="none" />
+            <polygon points="200,220 280,200 320,260 280,260" fill="none" />
+            <polygon points="280,200 360,180 380,240 320,260" fill="none" />
+            <polygon points="360,180 420,160 440,220 380,240" fill="none" />
+            <polygon points="380,120 420,100 450,140 420,160 380,140" fill="none" />
+            <polygon points="420,100 460,90 470,130 450,140" fill="none" />
+            <line x1="440" y1="95" x2="460" y2="60" />
+            <line x1="460" y1="90" x2="480" y2="65" />
+            <polygon points="360,140 400,130 420,160 380,180" fill="none" />
+            <polygon points="180,360 200,380 180,420 160,400 140,380" fill="none" />
+            <polygon points="240,360 260,375 250,420 230,415 220,380" fill="none" />
+            <polygon points="300,340 320,355 310,400 290,395 280,365" fill="none" />
+            <polygon points="350,300 370,315 360,360 340,355 335,325" fill="none" />
+            <polyline points="120,290 90,310 70,340 80,370 100,360" />
+            <line x1="200" y1="220" x2="260" y2="340" />
+            <line x1="280" y1="260" x2="180" y2="360" />
+            <line x1="280" y1="200" x2="260" y2="340" />
+            <line x1="320" y1="260" x2="240" y2="360" />
+            <line x1="380" y1="240" x2="320" y2="260" />
+            <line x1="360" y1="180" x2="300" y2="340" />
+            <line x1="420" y1="160" x2="350" y2="300" />
+            <circle cx="200" cy="220" r="3" fill="#00e8c8" />
+            <circle cx="280" cy="200" r="3" fill="#00e8c8" />
+            <circle cx="360" cy="180" r="3" fill="#00e8c8" />
+            <circle cx="420" cy="160" r="3" fill="#00e8c8" />
+            <circle cx="280" cy="260" r="3" fill="#00e8c8" />
+            <circle cx="320" cy="260" r="3" fill="#00e8c8" />
+            <circle cx="380" cy="240" r="3" fill="#00e8c8" />
+            <circle cx="260" cy="340" r="3" fill="#00e8c8" />
+            <circle cx="300" cy="340" r="3" fill="#00e8c8" />
+            <circle cx="350" cy="300" r="3" fill="#00e8c8" />
+            <circle cx="180" cy="360" r="3" fill="#f5c518" />
+            <circle cx="240" cy="360" r="3" fill="#f5c518" />
+            <circle cx="420" cy="100" r="3" fill="#00e8c8" />
+            <circle cx="450" cy="140" r="3" fill="#00e8c8" />
+            <circle cx="380" cy="120" r="3" fill="#00e8c8" />
+        </g>
+    </svg>
+
+    <!-- ── AUTH CARD ── -->
+    <div class="auth-card">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <img src="assets/logo.png" alt="NexaBull" />
+            </div>
+            <div class="auth-shield">🛡️</div>
+            <div class="auth-title"><span>Secure</span> Authentication</div>
+
+            <div class="auth-alert" id="login-alert"></div>
+
+            <!-- UserId -->
+            <div class="field-group">
+                <div class="field-label"><span>👤</span> UserId</div>
+                <div class="field-wrap">
+                    <span class="field-prefix">🗂️</span>
+                    <input class="field-input" id="login-userid" type="text" placeholder="Enter UserId"
+                        autocomplete="off" />
+                    <span class="field-suffix">🛡️</span>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div class="field-group">
+                <div class="field-label"><span>🔑</span> Password</div>
+                <div class="field-wrap">
+                    <span class="field-prefix">🗂️</span>
+                    <input class="field-input" id="login-password" type="password" placeholder="Enter Password"
+                        autocomplete="off" />
+                    <span class="field-suffix" id="pw-toggle"
+                        onclick="togglePw('login-password','pw-toggle')">👁️</span>
+                </div>
+            </div>
+
+            <!-- Captcha Code -->
+            <div class="field-group">
+                <div class="field-label"><span>🔑</span> Captcha Code</div>
+                <div class="field-wrap">
+                    <span class="field-prefix">🛡️</span>
+                    <input class="field-input" id="login-captcha-input" type="text" placeholder="Enter Captcha"
+                        autocomplete="off" />
+                    <span class="field-suffix">🛡️</span>
+                </div>
+            </div>
+
+            <!-- Captcha image -->
+            <div class="field-group">
+                <div class="field-label"><span>🛡️</span> Captcha</div>
+                <div class="captcha-row">
+                    <div class="captcha-img-wrap">
+                        <img id="login-captcha-img" src="" alt="captcha" />
+                    </div>
+                    <div class="captcha-reload" id="login-captcha-reload" title="Refresh captcha">↻</div>
+                </div>
+            </div>
+
+            <button class="btn-submit" id="login-btn" onclick="doLogin()">
+                🛡️ Sign to Continue &nbsp;→
+            </button>
+
+            <div class="auth-footer-link">
+                Don't have an account? <a href="signup.html">Register Now</a>
+            </div>
+            <div class="auth-footer-link" style="margin-top:8px;">
+                <a href="index.html">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = '/api';
+        let loginSession = '';
+
+        /* ── Background canvas (teal mesh) ── */
+        (function () {
+            const canvas = document.getElementById('auth-canvas');
+            const ctx = canvas.getContext('2d');
+            function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+            resize(); window.addEventListener('resize', resize);
+
+            const nodes = Array.from({ length: 70 }, () => ({
+                x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+                vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, r: Math.random() * 1.5 + 0.5
+            }));
+
+            function frame() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                /* gradient background */
+                const g = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                g.addColorStop(0, '#02333d'); g.addColorStop(0.5, '#015062'); g.addColorStop(1, '#011520');
+                ctx.fillStyle = g; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
+                        const d = Math.sqrt(dx * dx + dy * dy);
+                        if (d < 160) {
+                            ctx.strokeStyle = `rgba(0,230,200,${(1 - d / 160) * 0.3})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
+                        }
+                    }
+                    ctx.beginPath(); ctx.arc(nodes[i].x, nodes[i].y, nodes[i].r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0,220,200,0.7)'; ctx.fill();
+                    nodes[i].x += nodes[i].vx; nodes[i].y += nodes[i].vy;
+                    if (nodes[i].x < 0 || nodes[i].x > canvas.width) nodes[i].vx *= -1;
+                    if (nodes[i].y < 0 || nodes[i].y > canvas.height) nodes[i].vy *= -1;
+                }
+                requestAnimationFrame(frame);
+            }
+            frame();
+        })();
+
+        /* ── Floating financial numbers ── */
+        (function () {
+            const nums = [
+                { v: '48,900', c: '#00cc99' }, { v: '(+24.90)', c: '#00cc99' },
+                { v: '+0.936402', c: '#00e676' }, { v: '+0.32', c: '#00cc80' },
+                { v: '36,900', c: '#00cc99' }, { v: '(+45.18)', c: '#00e676' },
+                { v: '▲ -54.62', c: '#ff6b6b' }, { v: '+40.66', c: '#00e676' },
+                { v: '▼ -23%', c: '#ff6b6b' }, { v: '400.05146', c: '#00cc99' },
+                { v: '(-18.68)', c: '#ff6b6b' }, { v: '(-16.24)', c: '#ff6b6b' },
+                { v: '-4871.81', c: '#ff6b6b' }, { v: 'BTC/USD', c: 'rgba(0,200,180,0.6)' },
+                { v: '68,945', c: '#00cc99' }, { v: 'XAU/USD', c: 'rgba(0,200,180,0.6)' },
+                { v: '2,345.80', c: '#00cc99' }, { v: '-5134', c: '#ff6b6b' },
+                { v: '-23,366', c: '#ff6b6b' }, { v: '6,470', c: '#00e676' },
+            ];
+            const container = document.getElementById('float-nums');
+            nums.forEach((n, i) => {
+                const el = document.createElement('div');
+                el.className = 'fn';
+                el.textContent = n.v;
+                el.style.color = n.c;
+                el.style.fontSize = (Math.random() * 5 + 10) + 'px';
+                el.style.left = (Math.random() * 85) + '%';
+                el.style.top = (Math.random() * 85) + '%';
+                el.style.animationDelay = (Math.random() * 5) + 's';
+                el.style.animationDuration = (6 + Math.random() * 6) + 's';
+                container.appendChild(el);
+            });
+        })();
+
+        /* ── Toggle password visibility ── */
+        function togglePw(id, btnId) {
+            const inp = document.getElementById(id);
+            const btn = document.getElementById(btnId);
+            const show = inp.type === 'password';
+            inp.type = show ? 'text' : 'password';
+            btn.textContent = show ? '🙈' : '👁️';
+        }
+
+        /* ── Load captcha ── */
+        async function loadCaptcha() {
+            try {
+                const res = await fetch(API + '/auth/captcha');
+                const d = await res.json();
+                if (d.success) {
+                    document.getElementById('login-captcha-img').src = d.captchaImage;
+                    loginSession = d.sessionId;
+                }
+            } catch {
+                genFallbackCaptcha();
+            }
+        }
+
+        function genFallbackCaptcha() {
+            const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+            let code = '';
+            for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+            loginSession = 'fallback:' + code;
+            const c = document.createElement('canvas');
+            c.width = 160; c.height = 48;
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = '#f0f4f8'; ctx.fillRect(0, 0, 160, 48);
+            for (let i = 0; i < 5; i++) {
+                ctx.strokeStyle = `rgba(100,150,200,0.3)`;
+                ctx.beginPath(); ctx.moveTo(Math.random() * 160, Math.random() * 48); ctx.lineTo(Math.random() * 160, Math.random() * 48); ctx.stroke();
+            }
+            code.split('').forEach((ch, i) => {
+                ctx.save(); ctx.font = `bold ${20 + Math.random() * 4}px Arial`;
+                ctx.fillStyle = ['#1a6cf5', '#0e5ca0', '#2baee0', '#14527a'][Math.floor(Math.random() * 4)];
+                ctx.translate(14 + i * 24 + Math.random() * 4 - 2, 32 + Math.random() * 6 - 3);
+                ctx.rotate((Math.random() * 20 - 10) * Math.PI / 180);
+                ctx.fillText(ch, 0, 0); ctx.restore();
+            });
+            document.getElementById('login-captcha-img').src = c.toDataURL();
+        }
+
+        document.getElementById('login-captcha-reload').addEventListener('click', loadCaptcha);
+        loadCaptcha();
+
+        /* ── Alert helper ── */
+        function showAlert(id, msg, type) {
+            const el = document.getElementById(id);
+            el.textContent = msg; el.className = 'auth-alert ' + type + ' show';
+            setTimeout(() => el.className = 'auth-alert', 5000);
+        }
+
+        /* ── Login ── */
+        async function doLogin() {
+            const userId = document.getElementById('login-userid').value.trim();
+            const password = document.getElementById('login-password').value;
+            const captchaCode = document.getElementById('login-captcha-input').value.trim();
+            if (!userId || !password || !captchaCode) { showAlert('login-alert', 'Please fill in all fields.', 'error'); return; }
+            const btn = document.getElementById('login-btn');
+            btn.disabled = true; btn.textContent = '⌛ Authenticating...';
+            try {
+                /* fallback captcha check */
+                if (loginSession.startsWith('fallback:')) {
+                    if (captchaCode.toLowerCase() !== loginSession.split(':')[1].toLowerCase()) {
+                        showAlert('login-alert', 'Invalid captcha code. Please try again.', 'error');
+                        loadCaptcha(); btn.disabled = false; btn.innerHTML = '🛡️ Sign to Continue &nbsp;→'; return;
+                    }
+                }
+                const res = await fetch(API + '/auth/login', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, password, captchaCode, captchaSessionId: loginSession })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('nb_token', data.token);
+                    localStorage.setItem('nb_user', JSON.stringify(data.data?.user));
+                    showAlert('login-alert', '✅ Login successful! Redirecting...', 'success');
+                    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+                } else {
+                    showAlert('login-alert', data.message || 'Login failed. Check your credentials.', 'error');
+                    loadCaptcha();
+                }
+            } catch {
+                showAlert('login-alert', 'Cannot connect to server. Please ensure the backend is running.', 'error');
+            } finally {
+                btn.disabled = false; btn.innerHTML = '🛡️ Sign to Continue &nbsp;→';
+            }
+        }
+
+        /* Enter key submit */
+        document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    </script>
+</body>
+
+</html>

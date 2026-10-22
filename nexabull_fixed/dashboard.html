@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard – NexaBull | My Account</title>
+    <meta name="description"
+        content="Manage your NexaBull trading account, wallet, and referral network from your personal dashboard." />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="icon" href="assets/logo.png" type="image/png" />
+</head>
+
+<body class="dashboard-body">
+
+    <!-- ── Sidebar ─────────────────────────────────────────────── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <a href="index.html"><img src="assets/logo.png" alt="NexaBull" /></a>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="sidebar-link active" id="nav-overview" data-panel="overview">
+                <span class="sidebar-icon">📊</span> Dashboard
+            </a>
+            <a href="#" class="sidebar-link" id="nav-wallet" data-panel="wallet">
+                <span class="sidebar-icon">👛</span> Wallet
+            </a>
+            <a href="#" class="sidebar-link" id="nav-referrals" data-panel="referrals">
+                <span class="sidebar-icon">👥</span> Referrals
+            </a>
+            <a href="#" class="sidebar-link" id="nav-profile" data-panel="profile">
+                <span class="sidebar-icon">👤</span> Profile
+            </a>
+            <a href="#" class="sidebar-link" id="nav-signals" data-panel="signals">
+                <span class="sidebar-icon">📈</span> Signals
+            </a>
+            <a href="#" class="sidebar-link" id="nav-support" data-panel="support">
+                <span class="sidebar-icon">💬</span> Support
+            </a>
+        </nav>
+        <div class="sidebar-logout">
+            <button class="btn-logout" id="btn-logout">
+                <span>🚪</span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- ── Main Content ────────────────────────────────────────── -->
+    <main class="dash-main">
+        <!-- Top Bar -->
+        <header class="dash-topbar">
+            <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+            <div class="topbar-title" id="topbar-title">Dashboard Overview</div>
+            <div class="topbar-right">
+                <div class="topbar-ticker">
+                    <span class="ticker-item"><span style="color:#f7931a">BTC</span> <span
+                            id="dash-btc">$67,420</span></span>
+                    <span class="ticker-item"><span style="color:#627eea">ETH</span> <span id="dash-eth"
+                            style="color:#00e676">+4.8%</span></span>
+                </div>
+                <div class="topbar-user" id="topbar-user">
+                    <div class="topbar-avatar" id="topbar-avatar">N</div>
+                    <div class="topbar-user-info">
+                        <div class="topbar-name" id="topbar-name">Loading...</div>
+                        <div class="topbar-uid" id="topbar-uid">ID: —</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ── Panels ────────────────────────────────────────────── -->
+        <div class="dash-content">
+            <div id="dash-alert" class="alert" style="margin-bottom:16px;"></div>
+
+            <!-- Overview Panel -->
+            <div class="panel active" id="panel-overview">
+                <div class="panel-greeting">
+                    <h2>Welcome back, <span class="text-gold" id="greeting-name">Trader</span> 👋</h2>
+                    <p class="text-muted">Here's your account summary.</p>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:rgba(0,240,255,0.12);color:var(--cyan-primary)">💰</div>
+                        <div class="kpi-info">
+                            <div class="kpi-label">Wallet Balance</div>
+                            <div class="kpi-value" id="kpi-balance">$0.00</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:rgba(240,200,80,0.12);color:var(--gold-primary)">📥
+                        </div>
+                        <div class="kpi-info">
+                            <div class="kpi-label">Total Earned</div>
+                            <div class="kpi-value" id="kpi-earned">$0.00</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:rgba(0,230,118,0.12);color:#00e676">👥</div>
+                        <div class="kpi-info">
+                            <div class="kpi-label">Total Referrals</div>
+                            <div class="kpi-value" id="kpi-referrals">0</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon" style="background:rgba(124,77,255,0.12);color:#7c4dff">📤</div>
+                        <div class="kpi-info">
+                            <div class="kpi-label">Total Withdrawn</div>
+                            <div class="kpi-value" id="kpi-withdrawn">$0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Info -->
+                <div class="dash-grid-2">
+                    <div class="dash-card">
+                        <div class="dash-card-title">Account Information</div>
+                        <div class="info-list" id="account-info-list">
+                            <div class="info-row"><span>User ID</span><strong id="info-uid">—</strong></div>
+                            <div class="info-row"><span>Sponsor ID</span><strong id="info-sponsor-id">—</strong></div>
+                            <div class="info-row"><span>Sponsor Name</span><strong id="info-sponsor-name">—</strong>
+                            </div>
+                            <div class="info-row"><span>Name</span><strong id="info-name">—</strong></div>
+                            <div class="info-row"><span>Email</span><strong id="info-email">—</strong></div>
+                            <div class="info-row"><span>Mobile</span><strong id="info-mobile">—</strong></div>
+                            <div class="info-row"><span>Status</span><span class="badge badge-active"
+                                    id="info-status">Active</span></div>
+                            <div class="info-row"><span>Member Since</span><strong id="info-since">—</strong></div>
+                        </div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="dash-card-title">Quick Actions</div>
+                        <div class="quick-actions">
+                            <button class="qa-btn" onclick="switchPanel('wallet')">
+                                <span>👛</span> View Wallet
+                            </button>
+                            <button class="qa-btn" onclick="switchPanel('referrals')">
+                                <span>👥</span> My Referrals
+                            </button>
+                            <button class="qa-btn" onclick="copyReferralLink()">
+                                <span>🔗</span> Copy Referral Link
+                            </button>
+                            <button class="qa-btn" onclick="switchPanel('signals')">
+                                <span>📈</span> Trading Signals
+                            </button>
+                        </div>
+                        <div class="dash-card-title" style="margin-top:24px">Referral Link</div>
+                        <div class="referral-link-box">
+                            <input type="text" id="referral-link-input" class="referral-input" readonly />
+                            <button class="copy-btn" onclick="copyReferralLink()" id="copy-ref-btn">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wallet Panel -->
+            <div class="panel" id="panel-wallet">
+                <div class="panel-header">
+                    <h2>My <span class="text-gold">Wallet</span></h2>
+                </div>
+                <div class="wallet-cards">
+                    <div class="wallet-card">
+                        <div class="wallet-card-icon">💰</div>
+                        <div class="wallet-card-label">Available Balance</div>
+                        <div class="wallet-card-value text-gold" id="wallet-balance">$0.00</div>
+                    </div>
+                    <div class="wallet-card">
+                        <div class="wallet-card-icon">📥</div>
+                        <div class="wallet-card-label">Total Earned</div>
+                        <div class="wallet-card-value" id="wallet-earned">$0.00</div>
+                    </div>
+                    <div class="wallet-card">
+                        <div class="wallet-card-icon">📤</div>
+                        <div class="wallet-card-label">Total Withdrawn</div>
+                        <div class="wallet-card-value" id="wallet-withdrawn">$0.00</div>
+                    </div>
+                </div>
+                <div class="dash-card" style="max-width:480px;margin-top:24px">
+                    <div class="dash-card-title">Request Withdrawal</div>
+                    <div class="form-group">
+                        <label class="field-label">Wallet Address (USDT TRC-20)</label>
+                        <input type="text" class="form-control" id="withdraw-address"
+                            placeholder="Enter your USDT wallet address" />
+                    </div>
+                    <div class="form-group">
+                        <label class="field-label">Amount (USD)</label>
+                        <input type="number" class="form-control" id="withdraw-amount" placeholder="0.00" min="10" />
+                    </div>
+                    <button class="btn-primary" id="withdraw-btn" style="margin-top:8px" onclick="submitWithdrawal()">
+                        <span>📤</span> Request Withdrawal
+                    </button>
+                    <p style="font-size:12px;color:var(--text-muted);margin-top:12px">Minimum withdrawal: $10. Processed
+                        within 24-48 hours.</p>
+                </div>
+            </div>
+
+            <!-- Referrals Panel -->
+            <div class="panel" id="panel-referrals">
+                <div class="panel-header">
+                    <h2>My <span class="text-gold">Referrals</span></h2>
+                    <div class="referral-count-badge"><span id="ref-count">0</span> Members</div>
+                </div>
+                <div class="dash-card" style="margin-bottom:24px">
+                    <div class="dash-card-title">Your Referral Link</div>
+                    <div class="referral-link-box">
+                        <input type="text" id="referral-link-input2" class="referral-input" readonly />
+                        <button class="copy-btn" onclick="copyReferralLink2()">Copy</button>
+                    </div>
+                    <p style="font-size:13px;color:var(--text-muted);margin-top:10px">Share this link to earn referral
+                        commissions when new members register.</p>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-card-title">Referral Members</div>
+                    <div class="table-wrap">
+                        <table class="dash-table" id="referrals-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>User ID</th>
+                                    <th>Name</th>
+                                    <th>Joined</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="referrals-tbody">
+                                <tr>
+                                    <td colspan="5" class="table-empty">No referrals yet. Start sharing your referral
+                                        link!</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Panel -->
+            <div class="panel" id="panel-profile">
+                <div class="panel-header">
+                    <h2>My <span class="text-gold">Profile</span></h2>
+                </div>
+                <div class="dash-card" style="max-width:500px">
+                    <div class="dash-card-title">Update Profile</div>
+                    <div id="profile-alert" class="alert" style="margin-bottom:16px"></div>
+                    <div class="form-group">
+                        <label class="field-label">Full Name</label>
+                        <input type="text" class="form-control" id="profile-name" placeholder="Your full name" />
+                    </div>
+                    <div class="form-group">
+                        <label class="field-label">Mobile Number</label>
+                        <input type="tel" class="form-control" id="profile-mobile" placeholder="Mobile number" />
+                    </div>
+                    <div class="form-group">
+                        <label class="field-label">Email (read-only)</label>
+                        <input type="email" class="form-control" id="profile-email" readonly style="opacity:0.6" />
+                    </div>
+                    <div class="form-group">
+                        <label class="field-label">User ID (read-only)</label>
+                        <input type="text" class="form-control" id="profile-uid" readonly style="opacity:0.6" />
+                    </div>
+                    <button class="btn-primary" id="profile-save-btn" onclick="saveProfile()">
+                        <span>💾</span> Save Changes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Signals Panel -->
+            <div class="panel" id="panel-signals">
+                <div class="panel-header">
+                    <h2>Trading <span class="text-gold">Signals</span></h2>
+                </div>
+                <div class="signals-grid" id="signals-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Support Panel -->
+            <div class="panel" id="panel-support">
+                <div class="panel-header">
+                    <h2>Help & <span class="text-gold">Support</span></h2>
+                </div>
+                <div class="dash-card" style="max-width:560px">
+                    <div class="dash-card-title">Submit a Support Ticket</div>
+                    <div class="form-group">
+                        <label class="field-label">Subject</label>
+                        <input type="text" class="form-control" id="support-subject"
+                            placeholder="Briefly describe your issue" />
+                    </div>
+                    <div class="form-group">
+                        <label class="field-label">Message</label>
+                        <textarea class="form-control" id="support-message" rows="5"
+                            placeholder="Provide more details..."></textarea>
+                    </div>
+                    <button class="btn-primary" onclick="submitSupport()"><span>📤</span> Send Ticket</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>
